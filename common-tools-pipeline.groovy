@@ -1,3 +1,5 @@
+properties([[$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false], pipelineTriggers([cron('H 1 * * *')])])
+
 def k8slabel = "jenkins-pipeline-${UUID.randomUUID().toString()}"
 def slavePodTemplate = """
       metadata:
@@ -65,8 +67,9 @@ def slavePodTemplate = """
          
         }
      stage("Pull SCM") {
-          git 'git@github.com:fuchicorp/common_tools.git'
+          git 'https://github.com/fuchicorp/common_tools.git'
         }
+
         stage('Generate Configurations') {
           container('fuchicorptools') {
              withCredentials([
@@ -83,6 +86,7 @@ def slavePodTemplate = """
             """
                 }
         }
+
         }
         stage("Apply/Plan")  {
           container('fuchicorptools') {
